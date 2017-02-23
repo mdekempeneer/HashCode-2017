@@ -32,26 +32,25 @@ public class Main {
     public static void main(String[] args) throws IOException {
         Main main = new Main();
 
-        
         if (args.length > 0) {
             main.readFile(args[0]);
         } else {
             main.readFile(askSavePath());
         }
 
+        long start = System.currentTimeMillis();
         main.alg1();
-        
+        long took = System.currentTimeMillis() - start;
+
         /*main.pList = main.getProfitList();
 
         main.pList.sort(new ProfitComparator());
         main.processList(main.pList);*/
 
-        /*for(int[] triple : main.pList) {
-            System.out.println(Arrays.toString(triple));
-        }*/
-        for (boolean[] v : main.store) {
+ /*for (boolean[] v : main.store) {
             System.out.println(Arrays.toString(v));
-        }
+        }*/
+        System.out.println("SCORE: " + main.getScore() + " took: " + took);
     }
 
     /**
@@ -161,6 +160,27 @@ public class Main {
         }
 
         return minimalDelay;
+    }
+
+    public double getScore() {
+        double score = 0;
+        int totalReq = 0;
+
+        for (int vID = 0; vID < videoNb; vID++) {
+            for (int endP = 0; endP < endPointsNb; endP++) {
+                int req = reqMat[endP][vID];
+
+                if (req != 0) {
+                    totalReq += req;
+                    score += req * (dataLat[endP] - minimalDelay(vID, endP));
+                }
+            }
+        }
+
+        System.out.println("totalReq " + totalReq + " and score " + score);
+        score *= (1000 / totalReq);
+
+        return score;
     }
 
     private static void printInput() {
