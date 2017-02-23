@@ -1,4 +1,4 @@
-package pizza;
+package hashcode;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -7,24 +7,15 @@ import java.io.IOException;
 import java.util.Arrays;
 import javax.swing.JFileChooser;
 
-public class Pizza {
-
-    public int ROWS;
-    public int COLS;
-    public int MIN;
-    public int MAX_CELLS;
-
-    public boolean[][] pizza;
+public class Main {
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException {
-        Pizza main = new Pizza();
+        Main main = new Main();
         main.readFile();
-        System.out.println(main.ROWS + " " + main.COLS + " " + main.MIN + " " + main.MAX_CELLS);
-        
-        printPizza(main.pizza);
+
         
     }
     
@@ -43,7 +34,7 @@ public class Pizza {
     
     
     
-    private static void printPizza(boolean[][] pizza) {
+    private static void printInput(boolean[][] pizza) {
         for (boolean[] pizza1 : pizza) {
             System.out.println(Arrays.toString(pizza1));
         }
