@@ -31,45 +31,74 @@ public class Main {
      */
     public static void main(String[] args) throws IOException {
         Main main = new Main();
+
         
-        if(args[0] != null){
+        if (args.length > 0) {
             main.readFile(args[0]);
-        }else{
+        } else {
             main.readFile(askSavePath());
         }
+
+        main.alg1();
         
-        main.pList = main.getProfitList();
-        
+        /*main.pList = main.getProfitList();
+
         main.pList.sort(new ProfitComparator());
-        main.processList(main.pList);
-        
+        main.processList(main.pList);*/
+
         /*for(int[] triple : main.pList) {
             System.out.println(Arrays.toString(triple));
         }*/
-        
-        for(boolean[] v : main.store) {
+        for (boolean[] v : main.store) {
             System.out.println(Arrays.toString(v));
         }
     }
-    
+
     /**
-     * 
+     *
      * @param arr sorted plox
      */
     public void processList(ArrayList<int[]> arr) {
-        
+
         int[] remSize = new int[cacheNb]; //remaining cache size
         Arrays.fill(remSize, cap);
-        
-        for(int[] triple : arr) {
+
+        for (int[] triple : arr) {
             int vID = triple[0];
             int cID = triple[1];
-            
-            if(remSize[cID] >= vidSize[vID]) { //fits in cache
+
+            if (remSize[cID] >= vidSize[vID]) { //fits in cache
                 store[vID][cID] = true;
                 remSize[cID] -= vidSize[vID];
             }
         }
+    }
+
+    public void alg1() {
+        int[] remSize = new int[cacheNb]; //remaining cache size
+        Arrays.fill(remSize, cap);
+
+        boolean found = true;
+
+        while (found) {
+            found = false;
+
+            pList = getProfitList();
+            pList.sort(new ProfitComparator());
+
+            for (int[] triple : pList) {
+                int vID = triple[0];
+                int cID = triple[1];
+
+                if (remSize[cID] >= vidSize[vID]) { //fits in cache
+                    store[vID][cID] = true;
+                    remSize[cID] -= vidSize[vID];
+                    found = true;
+                    break;
+                }
+            }
+        }
+
     }
 
     public ArrayList<int[]> getProfitList() {
@@ -80,8 +109,13 @@ public class Main {
                 int[] triple = new int[3];
                 triple[0] = vID;
                 triple[1] = cID;
-                triple[2] = calculateProfit(vID, cID);
-                result.add(triple);
+
+                if (!store[vID][cID]) {
+                    triple[2] = calculateProfit(vID, cID);
+                    if (triple[2] != 0) {
+                        result.add(triple);
+                    }
+                }
             }
         }
 
@@ -99,13 +133,34 @@ public class Main {
         int profit = 0;
 
         for (int endP = 0; endP < endPointsNb; endP++) {
-            int defLat = dataLat[endP] * reqMat[endP][videoX];
+            int currMinLat = minimalDelay(videoX, endP) * reqMat[endP][videoX];
             int altLat = latency[endP][cacheY];
 
-            profit += Math.max(defLat - altLat, 0);
+            profit += Math.max(currMinLat - altLat, 0);
         }
 
         return profit / vidSize[videoX];
+    }
+
+    /**
+     * Calculate minimal delay to find videoX
+     *
+     * @param videoX
+     * @param cacheY
+     * @param endP
+     * @return
+     */
+    public int minimalDelay(int videoX, int endP) {
+        int minimalDelay = dataLat[endP];
+
+        for (int cID = 0; cID < cacheNb; cID++) {
+            if (store[videoX][cID]) {
+                int lat = latency[endP][cID];
+                minimalDelay = (lat > -1) ? Math.min(minimalDelay, lat) : minimalDelay;
+            }
+        }
+
+        return minimalDelay;
     }
 
     private static void printInput() {
@@ -115,10 +170,9 @@ public class Main {
     }
 
     public void readFile(String Filename) throws IOException {
-        
-        //String FILENAME = askSavePath();
 
-            System.out.println(Filename);
+        //String FILENAME = askSavePath();
+        System.out.println(Filename);
         try (BufferedReader br = new BufferedReader(new FileReader(Filename))) {
             String cl = br.readLine();
             String[] temp = cl.split(" ");
@@ -137,9 +191,7 @@ public class Main {
 
             /* Empty latency */
             for (int i = 0; i < endPointsNb; i++) {
-                for (int j = 0; j < cacheNb; j++) {
-                    latency[i][j] = -1;
-                }
+                Arrays.fill(latency[i], -1);
             }
 
             /* read rest */
