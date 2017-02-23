@@ -10,6 +10,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 import javax.swing.JFileChooser;
@@ -33,6 +34,8 @@ public class Main {
 
     public int remSize[];
 
+    ArrayList<Integer> shuffled;
+
     /**
      * @param args the command line arguments
      * @throws java.io.IOException
@@ -47,7 +50,8 @@ public class Main {
         }
 
         long start = System.currentTimeMillis();
-        main.alg3();
+        main.createShuffled();
+        main.alg4();
         long took = System.currentTimeMillis() - start;
         /*main.pList = main.getProfitList();
 
@@ -57,6 +61,16 @@ public class Main {
         }*/
         System.out.println("SCORE: " + main.getScore() + " took: " + took);
         main.writeResultToFile();
+    }
+
+    public void createShuffled() {
+        shuffled = new ArrayList<>(cacheNb);
+
+        for (int i = 0; i < cacheNb; i++) {
+            shuffled.add(i);
+        }
+
+        Collections.shuffle(shuffled);
     }
 
     /**
@@ -134,7 +148,22 @@ public class Main {
             }
         }
     }
-    
+
+    public void alg4() {
+        int[] triple = new int[3];
+        while (triple.length != 0) {
+            triple = getAction4();
+
+            if (triple.length > 0) {
+                int vID = triple[0];
+                int cID = triple[1];
+
+                store[vID][cID] = true;
+                remSize[cID] -= vidSize[vID];
+            }
+        }
+    }
+
     public int[] getAction3() {
         int[] bestTriple = new int[3];
 
@@ -150,7 +179,7 @@ public class Main {
                         bestTriple[0] = vID;
                         bestTriple[1] = cID;
                         bestTriple[2] = profit;
-                        
+
                         return bestTriple;
                     }
                 }
@@ -163,8 +192,39 @@ public class Main {
 
         return bestTriple;
     }
-    
-    
+
+    public int[] getAction4() {
+        int[] bestTriple = new int[3];
+
+        for (int vID = 0; vID < videoNb; vID++) {
+            int vSize = vidSize[vID];
+
+            for (int cIndex = 0; cIndex < cacheNb; cIndex++) {
+
+                //for (int cID = 0; cID < cacheNb; cID++) {
+                int cID = shuffled.get(cIndex);
+                if (!store[vID][cID]) {
+
+                    int profit = calculateProfit(vID, cID);
+
+                    if (profit > 0 && remSize[cID] >= vSize) {
+                        bestTriple[0] = vID;
+                        bestTriple[1] = cID;
+                        bestTriple[2] = profit;
+
+                        return bestTriple;
+                    }
+                }
+            }
+        }
+
+        if (bestTriple[2] == 0) {
+            return new int[0];
+        }
+
+        return bestTriple;
+    }
+
     public int[] getAction() {
 
         int[] bestTriple = new int[3];
