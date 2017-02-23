@@ -1,11 +1,17 @@
 package hashcode;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Set;
 import javax.swing.JFileChooser;
 
 public class Main {
@@ -41,16 +47,14 @@ public class Main {
         long start = System.currentTimeMillis();
         main.alg1();
         long took = System.currentTimeMillis() - start;
-
         /*main.pList = main.getProfitList();
 
         main.pList.sort(new ProfitComparator());
-        main.processList(main.pList);*/
-
- /*for (boolean[] v : main.store) {
+        main.processList(main.pList);*/ /*for (boolean[] v : main.store) {
             System.out.println(Arrays.toString(v));
-        }*/
-        System.out.println("SCORE: " + main.getScore() + " took: " + took);
+        }*/ 
+                System.out.println("SCORE: " + main.getScore() + " took: " + took);
+        main.writeResultToFile();
     }
 
     /**
@@ -181,6 +185,62 @@ public class Main {
         score *= (1000 / totalReq);
 
         return score;
+    }
+
+    public void writeResultToFile() throws IOException {
+
+        ArrayList<Integer> videosInCache = new ArrayList<>();
+        HashMap<Integer, ArrayList<Integer>> result = new HashMap<>();
+        int nbOfUsedCaches = 0;
+
+        for (int col = 0; col < store[0].length; col++) {
+            videosInCache.clear();
+            for (int row = 0; row < store.length; row++) {
+                if (store[row][col]) {
+                    videosInCache.add(row);
+                }
+
+            }
+            if (!videosInCache.isEmpty()) {
+                System.out.println("COL: " + col);
+                System.out.println(videosInCache);
+                result.put(col, new ArrayList<Integer>(videosInCache));
+            }
+
+        }
+
+        nbOfUsedCaches = result.size();
+
+        //DEBUG print
+        System.out.println("Nb of used caches:");
+        System.out.println(nbOfUsedCaches);
+
+        try (Writer writer = new BufferedWriter(new OutputStreamWriter(
+                new FileOutputStream("solution.out"), "utf-8"))) {
+
+            writer.write(Integer.toString(nbOfUsedCaches) + "\n");
+            Set<Integer> keys = result.keySet();
+
+            //DEBUG print
+            System.out.println("SET OF KEYS:");
+            System.out.println(keys);
+            for (int nb : keys) {
+                writer.write(nb + " " + splitValues(result.get(nb)) + "\n");
+            }
+            writer.flush();
+            writer.close();
+        }
+    }
+
+    private String splitValues(ArrayList<Integer> values) {
+
+        String str = values.toString();
+        str = str.replace(", ", " ");
+        str = str.replace("[", "");
+        str = str.replace("]", "");
+
+        System.out.println(str);
+        return str;
     }
 
     private static void printInput() {
