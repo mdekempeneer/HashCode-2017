@@ -186,8 +186,6 @@ public class Main {
                 
             }
             if (!videosInCache.isEmpty()) {
-                    System.out.println("COL: " + col);
-                    System.out.println(videosInCache);
                     result.put(col, new ArrayList<Integer>(videosInCache));
                 }
 
@@ -195,19 +193,12 @@ public class Main {
 
         nbOfUsedCaches = result.size();
 
-        //DEBUG print
-        System.out.println("Nb of used caches:");
-        System.out.println(nbOfUsedCaches);
-
         try (Writer writer = new BufferedWriter(new OutputStreamWriter(
                 new FileOutputStream("solution.out"), "utf-8"))) {
 
             writer.write(Integer.toString(nbOfUsedCaches) + "\n");
             Set<Integer> keys = result.keySet();
 
-            //DEBUG print
-            System.out.println("SET OF KEYS:");
-            System.out.println(keys);
             for (int nb : keys) {
                 writer.write(nb + " " + splitValues(result.get(nb)) + "\n");
             }
@@ -223,7 +214,6 @@ public class Main {
         str = str.replace("[", "");
         str = str.replace("]", "");
 
-        System.out.println(str);
         return str;
 
     }
