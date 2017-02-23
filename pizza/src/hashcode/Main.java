@@ -16,8 +16,11 @@ public class Main {
     public int cap;
 
     public int latency[][]; //latency from endpoint to cache
+    public int reqMat[][]; //request amount by endPoint for videoID
     public int dataLat[];
     public int vidSize[];
+    
+    public boolean store[][]; // Whether video is stored in cache
 
     /**
      * @param args the command line arguments
@@ -50,6 +53,7 @@ public class Main {
             vidSize = new int[videoNb];
             dataLat = new int[endPointsNb];
             latency = new int[endPointsNb][cacheNb];
+            store = new boolean[videoNb][cacheNb];
 
             /* Empty latency */
             for (int i = 0; i < endPointsNb; i++) {
@@ -73,7 +77,7 @@ public class Main {
 
                 dataLat[endP] = Integer.parseInt(temp[0]);
 
-                int cNb = Integer.parseInt(temp[2]);
+                int cNb = Integer.parseInt(temp[1]);
                 for (int i = 0; i < cNb; i++) {
                     cl = br.readLine(); //read row
                     temp = cl.split(" "); //video sizes
@@ -82,9 +86,19 @@ public class Main {
                     latency[endP][cIndex] = Integer.parseInt(temp[1]);
                 }
             }
-            
+
             // Video requests
-            
+            for (int i = 0; i < reqDescNb; i++) {
+                cl = br.readLine(); //read row
+                temp = cl.split(" "); //video sizes
+                
+                int videoID = Integer.parseInt(temp[0]);
+                int endPointID = Integer.parseInt(temp[1]);
+                int nb = Integer.parseInt(temp[2]);
+                
+                reqMat[endPointID][videoID] = nb;
+            }
+
         }
 
     }
