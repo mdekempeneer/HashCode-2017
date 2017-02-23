@@ -47,7 +47,7 @@ public class Main {
         }
 
         long start = System.currentTimeMillis();
-        main.alg2();
+        main.alg3();
         long took = System.currentTimeMillis() - start;
         /*main.pList = main.getProfitList();
 
@@ -120,6 +120,51 @@ public class Main {
         }
     }
 
+    public void alg3() {
+        int[] triple = new int[3];
+        while (triple.length != 0) {
+            triple = getAction3();
+
+            if (triple.length > 0) {
+                int vID = triple[0];
+                int cID = triple[1];
+
+                store[vID][cID] = true;
+                remSize[cID] -= vidSize[vID];
+            }
+        }
+    }
+    
+    public int[] getAction3() {
+        int[] bestTriple = new int[3];
+
+        for (int vID = 0; vID < videoNb; vID++) {
+            int vSize = vidSize[vID];
+
+            for (int cID = 0; cID < cacheNb; cID++) {
+                if (!store[vID][cID]) {
+
+                    int profit = calculateProfit(vID, cID);
+
+                    if (profit > 0 && remSize[cID] >= vSize) {
+                        bestTriple[0] = vID;
+                        bestTriple[1] = cID;
+                        bestTriple[2] = profit;
+                        
+                        return bestTriple;
+                    }
+                }
+            }
+        }
+
+        if (bestTriple[2] == 0) {
+            return new int[0];
+        }
+
+        return bestTriple;
+    }
+    
+    
     public int[] getAction() {
 
         int[] bestTriple = new int[3];
