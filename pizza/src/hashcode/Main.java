@@ -9,6 +9,16 @@ import javax.swing.JFileChooser;
 
 public class Main {
 
+    public int videoNb;
+    public int endPointsNb;
+    public int reqDescNb;
+    public int cacheNb;
+    public int cap;
+
+    public int latency[][]; //latency from endpoint to cache
+    public int dataLat[];
+    public int vidSize[];
+
     /**
      * @param args the command line arguments
      */
@@ -16,24 +26,8 @@ public class Main {
         Main main = new Main();
         main.readFile();
 
-        
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     private static void printInput(boolean[][] pizza) {
         for (boolean[] pizza1 : pizza) {
             System.out.println(Arrays.toString(pizza1));
@@ -47,21 +41,50 @@ public class Main {
             String cl = br.readLine();
             String[] temp = cl.split(" ");
 
-            ROWS = Integer.parseInt(temp[0]);
-            COLS = Integer.parseInt(temp[1]);
-            MIN = Integer.parseInt(temp[2]);
-            MAX_CELLS = Integer.parseInt(temp[3]);
+            videoNb = Integer.parseInt(temp[0]);
+            endPointsNb = Integer.parseInt(temp[1]);
+            reqDescNb = Integer.parseInt(temp[2]);
+            cacheNb = Integer.parseInt(temp[3]);
+            cap = Integer.parseInt(temp[4]);
 
-            pizza = new boolean[ROWS][COLS];
+            vidSize = new int[videoNb];
+            dataLat = new int[endPointsNb];
+            latency = new int[endPointsNb][cacheNb];
 
-            for (int i = 0; i < ROWS; i++) {
-                cl = br.readLine(); //read row
-
-                for (int j = 0; j < COLS; j++) {
-                    pizza[i][j] = (cl.charAt(j) != 'M');
+            /* Empty latency */
+            for (int i = 0; i < endPointsNb; i++) {
+                for (int j = 0; j < cacheNb; j++) {
+                    latency[i][j] = -1;
                 }
-
             }
+
+            /* read rest */
+            cl = br.readLine(); //read row
+            temp = cl.split(" "); //video sizes
+
+            for (int i = 0; i < videoNb; i++) {
+                vidSize[i] = Integer.parseInt(temp[i]);
+            }
+
+            // Process endpoints
+            for (int endP = 0; endP < endPointsNb; endP++) { //each endpoint set
+                cl = br.readLine(); //read row
+                temp = cl.split(" "); //video sizes
+
+                dataLat[endP] = Integer.parseInt(temp[0]);
+
+                int cNb = Integer.parseInt(temp[2]);
+                for (int i = 0; i < cNb; i++) {
+                    cl = br.readLine(); //read row
+                    temp = cl.split(" "); //video sizes
+
+                    int cIndex = Integer.parseInt(temp[0]);
+                    latency[endP][cIndex] = Integer.parseInt(temp[1]);
+                }
+            }
+            
+            // Video requests
+            
         }
 
     }
