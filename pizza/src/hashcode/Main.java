@@ -4,10 +4,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import javax.swing.JFileChooser;
 
 public class Main {
+
+    public ArrayList<int[]> pList;
 
     public int videoNb;
     public int endPointsNb;
@@ -17,9 +19,9 @@ public class Main {
 
     public int latency[][]; //latency from endpoint to cache
     public int reqMat[][]; //request amount by endPoint for videoID
-    public int dataLat[];
+    public int dataLat[]; //latency for endpoint to datacenter
     public int vidSize[];
-    
+
     public boolean store[][]; // Whether video is stored in cache
 
     /**
@@ -28,13 +30,52 @@ public class Main {
     public static void main(String[] args) throws IOException {
         Main main = new Main();
         main.readFile();
+        main.pList = main.getProfitList();
+        
+        
 
     }
 
-    private static void printInput(boolean[][] pizza) {
-        for (boolean[] pizza1 : pizza) {
-            System.out.println(Arrays.toString(pizza1));
+    public ArrayList<int[]> getProfitList() {
+        ArrayList<int[]> result = new ArrayList<>(videoNb * cacheNb);
+
+        for (int vID = 0; vID < videoNb; vID++) {
+            for (int cID = 0; cID < cacheNb; cID++) {
+                int[] triple = new int[3];
+                triple[0] = vID;
+                triple[1] = cID;
+                triple[2] = calculateProfit(vID, cID);
+                result.add(triple);
+            }
         }
+
+        return result;
+    }
+
+    /**
+     * Calc profit for videoX if in cache Y. relative to size video
+     *
+     * @param videoX
+     * @param cacheY
+     * @return
+     */
+    public int calculateProfit(int videoX, int cacheY) {
+        int profit = 0;
+
+        for (int endP = 0; endP < endPointsNb; endP++) {
+            int defLat = dataLat[endP] * reqMat[endP][videoX];
+            int altLat = latency[endP][cacheY];
+
+            profit += Math.max(defLat - altLat, 0);
+        }
+
+        return profit / vidSize[videoX];
+    }
+
+    private static void printInput() {
+        //for (boolean[] pizza1 : pizza) {
+        //    System.out.println(Arrays.toString(pizza1));
+        //}
     }
 
     public void readFile() throws IOException {
@@ -91,16 +132,15 @@ public class Main {
             for (int i = 0; i < reqDescNb; i++) {
                 cl = br.readLine(); //read row
                 temp = cl.split(" "); //video sizes
-                
+
                 int videoID = Integer.parseInt(temp[0]);
                 int endPointID = Integer.parseInt(temp[1]);
                 int nb = Integer.parseInt(temp[2]);
-                
+
                 reqMat[endPointID][videoID] = nb;
             }
 
         }
-
     }
 
     /**
