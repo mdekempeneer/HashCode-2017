@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import javax.swing.JFileChooser;
 
 public class Main {
@@ -32,8 +33,36 @@ public class Main {
         main.readFile();
         main.pList = main.getProfitList();
         
+        main.pList.sort(new ProfitComparator());
+        main.processList(main.pList);
         
-
+        /*for(int[] triple : main.pList) {
+            System.out.println(Arrays.toString(triple));
+        }*/
+        
+        for(boolean[] v : main.store) {
+            System.out.println(Arrays.toString(v));
+        }
+    }
+    
+    /**
+     * 
+     * @param arr sorted plox
+     */
+    public void processList(ArrayList<int[]> arr) {
+        
+        int[] remSize = new int[cacheNb]; //remaining cache size
+        Arrays.fill(remSize, cap);
+        
+        for(int[] triple : arr) {
+            int vID = triple[0];
+            int cID = triple[1];
+            
+            if(remSize[cID] >= vidSize[vID]) { //fits in cache
+                store[vID][cID] = true;
+                remSize[cID] -= vidSize[vID];
+            }
+        }
     }
 
     public ArrayList<int[]> getProfitList() {
@@ -91,6 +120,7 @@ public class Main {
             cacheNb = Integer.parseInt(temp[3]);
             cap = Integer.parseInt(temp[4]);
 
+            reqMat = new int[endPointsNb][videoNb];
             vidSize = new int[videoNb];
             dataLat = new int[endPointsNb];
             latency = new int[endPointsNb][cacheNb];
