@@ -53,7 +53,7 @@ public class Main {
         main.processList(main.pList);*/ /*for (boolean[] v : main.store) {
             System.out.println(Arrays.toString(v));
         }*/ 
-                System.out.println("SCORE: " + main.getScore() + " took: " + took);
+        System.out.println("SCORE: " + main.getScore() + " took: " + took);
         main.writeResultToFile();
     }
 
@@ -176,7 +176,9 @@ public class Main {
 
                 if (req != 0) {
                     totalReq += req;
-                    score += req * (dataLat[endP] - minimalDelay(vID, endP));
+                    int a = dataLat[endP];
+                    int b = minimalDelay(vID, endP);
+                    score += req * (a - b);
                 }
             }
         }
