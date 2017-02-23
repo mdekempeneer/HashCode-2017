@@ -26,10 +26,17 @@ public class Main {
 
     /**
      * @param args the command line arguments
+     * @throws java.io.IOException
      */
     public static void main(String[] args) throws IOException {
         Main main = new Main();
-        main.readFile();
+        
+        if(args[0] != null){
+            main.readFile(args[0]);
+        }else{
+            main.readFile(askSavePath());
+        }
+        
         main.pList = main.getProfitList();
         
         
@@ -78,10 +85,12 @@ public class Main {
         //}
     }
 
-    public void readFile() throws IOException {
-        String FILENAME = askSavePath();
+    public void readFile(String Filename) throws IOException {
+        
+        //String FILENAME = askSavePath();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(FILENAME))) {
+            System.out.println(Filename);
+        try (BufferedReader br = new BufferedReader(new FileReader(Filename))) {
             String cl = br.readLine();
             String[] temp = cl.split(" ");
 
