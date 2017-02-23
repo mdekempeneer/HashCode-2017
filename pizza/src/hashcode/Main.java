@@ -44,22 +44,17 @@ public class Main {
             main.readFile(askSavePath());
         }
 
+        long start = System.currentTimeMillis();
         main.alg1();
-
+        long took = System.currentTimeMillis() - start;
         /*main.pList = main.getProfitList();
 
         main.pList.sort(new ProfitComparator());
-        main.processList(main.pList);*/
-
- /*for(int[] triple : main.pList) {
-            System.out.println(Arrays.toString(triple));
-        }*/
-        for (boolean[] v : main.store) {
+        main.processList(main.pList);*/ /*for (boolean[] v : main.store) {
             System.out.println(Arrays.toString(v));
-        }
-
+        }*/ 
+                System.out.println("SCORE: " + main.getScore() + " took: " + took);
         main.writeResultToFile();
-
     }
 
     /**
@@ -171,6 +166,27 @@ public class Main {
         return minimalDelay;
     }
 
+    public double getScore() {
+        double score = 0;
+        int totalReq = 0;
+
+        for (int vID = 0; vID < videoNb; vID++) {
+            for (int endP = 0; endP < endPointsNb; endP++) {
+                int req = reqMat[endP][vID];
+
+                if (req != 0) {
+                    totalReq += req;
+                    score += req * (dataLat[endP] - minimalDelay(vID, endP));
+                }
+            }
+        }
+
+        System.out.println("totalReq " + totalReq + " and score " + score);
+        score *= (1000 / totalReq);
+
+        return score;
+    }
+
     public void writeResultToFile() throws IOException {
 
         ArrayList<Integer> videosInCache = new ArrayList<>();
@@ -183,7 +199,7 @@ public class Main {
                 if (store[row][col]) {
                     videosInCache.add(row);
                 }
-                
+
             }
             if (!videosInCache.isEmpty()) {
                     result.put(col, new ArrayList<Integer>(videosInCache));
@@ -215,7 +231,6 @@ public class Main {
         str = str.replace("]", "");
 
         return str;
-
     }
 
     private static void printInput() {
