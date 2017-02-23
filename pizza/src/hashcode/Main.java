@@ -31,6 +31,8 @@ public class Main {
 
     public boolean store[][]; // Whether video is stored in cache
 
+    public int remSize[];
+
     /**
      * @param args the command line arguments
      * @throws java.io.IOException
@@ -45,14 +47,14 @@ public class Main {
         }
 
         long start = System.currentTimeMillis();
-        main.alg1();
+        main.alg2();
         long took = System.currentTimeMillis() - start;
         /*main.pList = main.getProfitList();
 
         main.pList.sort(new ProfitComparator());
         main.processList(main.pList);*/ /*for (boolean[] v : main.store) {
             System.out.println(Arrays.toString(v));
-        }*/ 
+        }*/
         System.out.println("SCORE: " + main.getScore() + " took: " + took);
         main.writeResultToFile();
     }
@@ -101,7 +103,49 @@ public class Main {
                 }
             }
         }
+    }
 
+    public void alg2() {
+        int[] triple = new int[3];
+        while (triple.length != 0) {
+            triple = getAction();
+
+            if (triple.length > 0) {
+                int vID = triple[0];
+                int cID = triple[1];
+
+                store[vID][cID] = true;
+                remSize[cID] -= vidSize[vID];
+            }
+        }
+    }
+
+    public int[] getAction() {
+
+        int[] bestTriple = new int[3];
+
+        for (int vID = 0; vID < videoNb; vID++) {
+            int vSize = vidSize[vID];
+
+            for (int cID = 0; cID < cacheNb; cID++) {
+                if (!store[vID][cID]) {
+
+                    int profit = calculateProfit(vID, cID);
+
+                    if (profit > bestTriple[2] && remSize[cID] >= vSize) {
+                        bestTriple[0] = vID;
+                        bestTriple[1] = cID;
+                        bestTriple[2] = profit;
+                    }
+                }
+            }
+        }
+
+        if (bestTriple[2] == 0) {
+            return new int[0];
+        }
+
+        return bestTriple;
     }
 
     public ArrayList<int[]> getProfitList() {
@@ -204,8 +248,8 @@ public class Main {
 
             }
             if (!videosInCache.isEmpty()) {
-                    result.put(col, new ArrayList<Integer>(videosInCache));
-                }
+                result.put(col, new ArrayList<Integer>(videosInCache));
+            }
 
         }
 
@@ -260,6 +304,8 @@ public class Main {
             dataLat = new int[endPointsNb];
             latency = new int[endPointsNb][cacheNb];
             store = new boolean[videoNb][cacheNb];
+            remSize = new int[cacheNb];
+            Arrays.fill(remSize, cap);
 
             /* Empty latency */
             for (int i = 0; i < endPointsNb; i++) {
