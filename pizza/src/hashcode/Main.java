@@ -15,20 +15,20 @@ import java.util.Set;
 import javax.swing.JFileChooser;
 
 public class Main {
-    
+
     public ArrayList<int[]> pList;
-    
+
     public int videoNb;
     public int endPointsNb;
     public int reqDescNb;
     public int cacheNb;
     public int cap;
-    
+
     public int latency[][]; //latency from endpoint to cache
     public int reqMat[][]; //request amount by endPoint for videoID
     public int dataLat[]; //latency for endpoint to datacenter
     public int vidSize[];
-    
+
     public boolean store[][]; // Whether video is stored in cache
 
     /**
@@ -38,7 +38,6 @@ public class Main {
     public static void main(String[] args) throws IOException {
         Main main = new Main();
 
-        
         if (args.length > 0) {
             main.readFile(args[0]);
         } else {
@@ -46,21 +45,21 @@ public class Main {
         }
 
         main.alg1();
-        
+
         /*main.pList = main.getProfitList();
 
         main.pList.sort(new ProfitComparator());
         main.processList(main.pList);*/
 
-        /*for(int[] triple : main.pList) {
+ /*for(int[] triple : main.pList) {
             System.out.println(Arrays.toString(triple));
         }*/
         for (boolean[] v : main.store) {
             System.out.println(Arrays.toString(v));
         }
-        
+
         main.writeResultToFile();
-        
+
     }
 
     /**
@@ -109,10 +108,10 @@ public class Main {
         }
 
     }
-    
+
     public ArrayList<int[]> getProfitList() {
         ArrayList<int[]> result = new ArrayList<>(videoNb * cacheNb);
-        
+
         for (int vID = 0; vID < videoNb; vID++) {
             for (int cID = 0; cID < cacheNb; cID++) {
                 int[] triple = new int[3];
@@ -127,7 +126,7 @@ public class Main {
                 }
             }
         }
-        
+
         return result;
     }
 
@@ -140,14 +139,14 @@ public class Main {
      */
     public int calculateProfit(int videoX, int cacheY) {
         int profit = 0;
-        
+
         for (int endP = 0; endP < endPointsNb; endP++) {
             int currMinLat = minimalDelay(videoX, endP) * reqMat[endP][videoX];
             int altLat = latency[endP][cacheY];
 
             profit += Math.max(currMinLat - altLat, 0);
         }
-        
+
         return profit / vidSize[videoX];
     }
 
@@ -171,58 +170,70 @@ public class Main {
 
         return minimalDelay;
     }
-    
+
     public void writeResultToFile() throws IOException {
-        
+
         ArrayList<Integer> videosInCache = new ArrayList<>();
         HashMap<Integer, ArrayList<Integer>> result = new HashMap<>();
         int nbOfUsedCaches = 0;
-        
+
         for (int col = 0; col < store[0].length; col++) {
             videosInCache.clear();
             for (int row = 0; row < store.length; row++) {
                 if (store[row][col]) {
                     videosInCache.add(row);
                 }
+                
             }
             if (!videosInCache.isEmpty()) {
-                result.put(col, videosInCache);
-            }
+                    System.out.println("COL: " + col);
+                    System.out.println(videosInCache);
+                    result.put(col, new ArrayList<Integer>(videosInCache));
+                }
+
         }
-        
+
         nbOfUsedCaches = result.size();
+
+        //DEBUG print
+        System.out.println("Nb of used caches:");
         System.out.println(nbOfUsedCaches);
-        
+
         try (Writer writer = new BufferedWriter(new OutputStreamWriter(
                 new FileOutputStream("solution.out"), "utf-8"))) {
-            
+
             writer.write(Integer.toString(nbOfUsedCaches) + "\n");
             Set<Integer> keys = result.keySet();
-            for (int nb : keys) {                
+
+            //DEBUG print
+            System.out.println("SET OF KEYS:");
+            System.out.println(keys);
+            for (int nb : keys) {
                 writer.write(nb + " " + splitValues(result.get(nb)) + "\n");
             }
             writer.flush();
             writer.close();
         }
     }
-    
+
     private String splitValues(ArrayList<Integer> values) {
-        
+
         String str = values.toString();
         str = str.replace(", ", " ");
         str = str.replace("[", "");
         str = str.replace("]", "");
-        
+
+        System.out.println(str);
         return str;
-        
+
     }
-    
+
     private static void printInput() {
         //for (boolean[] pizza1 : pizza) {
         //    System.out.println(Arrays.toString(pizza1));
         //}
     }
-    
+
     public void readFile(String Filename) throws IOException {
 
         //String FILENAME = askSavePath();
@@ -230,13 +241,13 @@ public class Main {
         try (BufferedReader br = new BufferedReader(new FileReader(Filename))) {
             String cl = br.readLine();
             String[] temp = cl.split(" ");
-            
+
             videoNb = Integer.parseInt(temp[0]);
             endPointsNb = Integer.parseInt(temp[1]);
             reqDescNb = Integer.parseInt(temp[2]);
             cacheNb = Integer.parseInt(temp[3]);
             cap = Integer.parseInt(temp[4]);
-            
+
             reqMat = new int[endPointsNb][videoNb];
             vidSize = new int[videoNb];
             dataLat = new int[endPointsNb];
@@ -262,7 +273,7 @@ public class Main {
                 temp = cl.split(" "); //video sizes
 
                 dataLat[endP] = Integer.parseInt(temp[0]);
-                
+
                 int cNb = Integer.parseInt(temp[1]);
                 for (int i = 0; i < cNb; i++) {
                     cl = br.readLine(); //read row
@@ -281,10 +292,10 @@ public class Main {
                 int videoID = Integer.parseInt(temp[0]);
                 int endPointID = Integer.parseInt(temp[1]);
                 int nb = Integer.parseInt(temp[2]);
-                
+
                 reqMat[endPointID][videoID] = nb;
             }
-            
+
         }
     }
 
@@ -296,14 +307,14 @@ public class Main {
     private static String askSavePath() {
         JFileChooser jfc = new JFileChooser();
         jfc.setCurrentDirectory(new File(System.getProperty("user.home")));
-        
+
         if (jfc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
             return jfc.getSelectedFile().getAbsolutePath();
         } else {
             System.out.println("Failed chosing a file.");
         }
-        
+
         return null;
     }
-    
+
 }
