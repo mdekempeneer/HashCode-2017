@@ -21,3 +21,11 @@ public Double getNumber{
 	return num;
 }
 
+public double counter = 0;
+
+public void count(){
+	while(true){
+		counter++;
+	}
+	System.out.println(counter.toString());
+}
