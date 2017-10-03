@@ -33,4 +33,7 @@ public void count(){
 
 public void howFarCanIPushThis(){
 	return "this method is just for error checking";
+
+public bool compareNumbers(){
+	return (5<3);
 }
