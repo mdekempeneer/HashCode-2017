@@ -29,3 +29,8 @@ public void count(){
 	}
 	System.out.println(counter.toString());
 }
+
+
+public void howFarCanIPushThis(){
+	return "this method is just for error checking";
+}
