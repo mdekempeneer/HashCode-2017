@@ -470,6 +470,7 @@ public class Main {
             return jfc.getSelectedFile().getAbsolutePath();
         } else {
             System.out.println("Failed chosing a file.");
+            System.out.println("Please select the file again.");
         }
 
         return null;
