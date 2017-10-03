@@ -29,3 +29,8 @@ public void count(){
 	}
 	System.out.println(counter.toString());
 }
+
+
+public bool compareNumbers(){
+	return (5<3);
+}
