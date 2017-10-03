@@ -474,8 +474,12 @@ public class Main {
 
         return null;
     }
+    
+    private int counterplus(int number) {
+        return number + 1;
+    }
 
     private String toString() {
-        return "this function"
+        return "this function";
     }
 }
