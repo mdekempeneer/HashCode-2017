@@ -15,3 +15,9 @@ public class ProfitComparator implements Comparator<int[]> {
         }
     }
 }
+
+public double num = 15;
+public Double getNumber{
+	return num;
+}
+
