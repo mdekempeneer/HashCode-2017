@@ -475,4 +475,7 @@ public class Main {
         return null;
     }
 
+    private String toString() {
+        return "this function"
+    }
 }
