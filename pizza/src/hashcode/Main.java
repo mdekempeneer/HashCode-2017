@@ -483,4 +483,8 @@ public class Main {
     private String toString() {
         return "this function";
     }
+    
+    public int repeater(int something) {
+        return something;
+    }
 }
