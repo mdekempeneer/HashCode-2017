@@ -478,4 +478,8 @@ public class Main {
     private int counterplus(int number) {
         return number + 1;
     }
+
+    private String toString() {
+        return "this function";
+    }
 }
