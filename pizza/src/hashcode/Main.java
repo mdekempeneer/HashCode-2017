@@ -389,7 +389,11 @@ public class Main {
         //    System.out.println(Arrays.toString(pizza1));
         //}
     }
-
+    
+    /**
+     * Read the given file and initialize the appropriate variables.
+     * @param filename The Path to the file to read
+     */
     public void readFile(String Filename) throws IOException {
 
         //String FILENAME = askSavePath();
