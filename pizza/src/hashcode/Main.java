@@ -275,11 +275,11 @@ public class Main {
     }
 
     /**
-     * Calc profit for videoX if in cache Y. relative to size video
+     * Calc profit for videoX if in cache Y. relative to video size
      *
-     * @param videoX
-     * @param cacheY
-     * @return
+     * @param videoX The video in question
+     * @param cacheY The cache where the videoX would reside in
+     * @return The calculated profit
      */
     public int calculateProfit(int videoX, int cacheY) {
         int profit = 0;
